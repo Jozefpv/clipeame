@@ -227,7 +227,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
           <div className="px-6 py-4 border-t border-gray-700 flex justify-end">
             <button
               onClick={() => setModalOpen(true)}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-full transition"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-full transition cursor-pointer"
             >
               PARTICIPAR
             </button>

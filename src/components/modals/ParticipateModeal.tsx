@@ -29,8 +29,15 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
     }
 
     setLoading(true)
-      await gateway.participate(campaignId, postLink.trim())
-    setLoading(false)
+      try {
+          await gateway.participate(campaignId, postLink.trim())
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        console.error(err)
+      } finally {
+
+        setLoading(false)
+      }
   }
 
   if (!isOpen) return null
@@ -53,7 +60,7 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
         <header className="px-6 py-4 border-b border-gray-700 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-white">Crear envío</h2>
           <button
-            className="text-gray-400 hover:text-white"
+            className="text-gray-400 hover:text-white cursor-pointer"
             onClick={onClose}
             disabled={loading}
           >
@@ -95,14 +102,14 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
 
         <footer className="px-6 py-4 border-t border-gray-700 text-right">
           <button
-            className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-full mr-2 disabled:opacity-50"
+            className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-full mr-2 disabled:opacity-50 cursor-pointer"
             onClick={onClose}
             disabled={loading}
           >
             Cancelar
           </button>
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full disabled:opacity-50"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full disabled:opacity-50 cursor-pointer"
             onClick={handleSubmit}
             disabled={loading}
           >
