@@ -1,21 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { Campaign } from '../../models/CampingModel';
+import React, { useContext, useEffect } from 'react';
 import { CampaignCard } from '../../components/CampaignCard';
 import { FiDollarSign } from 'react-icons/fi';
 import { DashboardGateway } from '../../gateways/dashboard.gateway';
+import { CampaignContext } from '../../context/CampaignContext';
+import { AuthContext } from '../../context/AuthContext';
 
 export default function Dashboard() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const gateway = new DashboardGateway();
+  const { campaigns, setCampaigns } = useContext(CampaignContext);
+  const { profile } = useContext(AuthContext);
+
 
   useEffect(() => {
     (async () => {
-      const campaigns = await gateway.getAllCampaigns();
-      setCampaigns(campaigns);
-    })
-    ()
-
+      if(campaigns.length === 0){
+        const allCampaigns = await gateway.getAllCampaigns();
+        setCampaigns(allCampaigns);
+      }
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  console.log(profile)
 
   return (
     <div className="h-full w-full bg-zinc-900 flex flex-col items-center justify-start py-8 px-4 sm:px-6 lg:px-8">

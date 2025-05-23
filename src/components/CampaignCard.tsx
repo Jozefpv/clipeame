@@ -13,7 +13,12 @@ export const CampaignCard: React.FC<Props> = ({ campaign }) => {
   const progress = Math.min(100, (campaign.paid / campaign.budget) * 100);
 
   return (
-    <div className="group bg-zinc-800 rounded-2xl cursor-pointer overflow-hidden shadow-lg flex flex-col hover:bg-zinc-700 transition" onClick={()=> navigate(`/campaign/${campaign.id}`)}>
+    <div className="group bg-zinc-800 rounded-2xl cursor-pointer overflow-hidden shadow-lg flex flex-col hover:bg-zinc-700 transition" 
+      onClick={() =>
+          navigate(`/campaign/${campaign.id}`, {
+            state: { campaign },
+          })
+      }>
       <div className="px-4 py-3 flex items-center gap-2">
         <img
           src={campaign.authorAvatar}

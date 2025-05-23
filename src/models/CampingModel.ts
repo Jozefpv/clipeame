@@ -1,3 +1,5 @@
+import { CampaignParticipants } from "./CampaignParticipants"
+
 export interface Campaign {
   id: string
   title: string
@@ -10,7 +12,7 @@ export interface Campaign {
   socialMedia: string
   requirements: string[]
   category: string
-  files: string[]
+  files: any[]
   status: number
   creationDate: Date
   startDate:    Date
@@ -19,6 +21,7 @@ export interface Campaign {
   authorName:   string
   authorAvatar: string
   maxPayment: number
+  participants: CampaignParticipants[]
   onParticipate: () => void
 }
 

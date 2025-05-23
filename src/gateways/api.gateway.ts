@@ -13,7 +13,7 @@ export class ApiGateway {
       const res = await this.axios.get('/api/check-auth', {
         withCredentials: true
       });
-      return res.status === 200;
+      return res;
   }
 
 }

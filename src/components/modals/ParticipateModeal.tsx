@@ -31,6 +31,7 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
     setLoading(true)
       try {
           await gateway.participate(campaignId, postLink.trim())
+          setSuccess('¡Participación satisfactoria!')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(err)

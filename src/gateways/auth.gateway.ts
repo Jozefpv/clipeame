@@ -1,5 +1,6 @@
 import { AxiosInstance } from 'axios';
 import { buildAxiosInstance } from './axios.builder';
+import { Profile } from '../models/Profile';
 
 export class AuthGateway {
 
@@ -38,5 +39,13 @@ export class AuthGateway {
 
     getGoogleAuthUrl(): string {
         return `${this.axios.defaults.baseURL}/auth/google`;
+    }
+
+    async getProfile(profileId: string): Promise<Profile> {
+        const res = await this.axios.get(
+        `auth/profile/${profileId}`,
+        { withCredentials: true }
+      );
+      return res.data;
     }
 }
