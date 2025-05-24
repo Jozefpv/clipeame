@@ -1,29 +1,22 @@
-import React, { useState, ChangeEvent, FormEvent, JSX } from "react";
+import React, { useState, ChangeEvent, JSX, useContext } from "react";
 import {
   FaUserCircle,
   FaPlug,
   FaLock,
   FaCreditCard,
-  FaWallet,
-  FaHistory,
-  FaStar,
-  FaLifeRing,
-  FaExclamationTriangle,
+  // FaWallet,
+  // FaHistory,
+  // FaStar,
+  // FaLifeRing,
+  // FaExclamationTriangle,
   FaTrashAlt,
 } from "react-icons/fa";
-import Toggle from "../../components/Toggle";
-
-
-interface FormState {
-  nombre: string;
-  biografia: string;
-  usuario: string;
-  email: string;
-  telefono: string;
-  showJoined: boolean;
-  showOwned: boolean;
-  showLocation: boolean;
-}
+//import Toggle from "../../components/Toggle";
+import { AuthGateway } from "../../gateways/auth.gateway";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import  { AvatarModal } from "../../components/AvatarModal";
+import { Profile } from "../../models/Profile";
 
 interface Tab {
   id: string;
@@ -36,41 +29,61 @@ const tabs: Tab[] = [
   { id: "conectadas", label: "Cuentas conectadas",     icon: <FaPlug /> },
   { id: "privacidad", label: "Seguridad y privacidad",  icon: <FaLock /> },
   { id: "pagos",      label: "Métodos de pago",        icon: <FaCreditCard /> },
-  { id: "saldo",      label: "Saldo",                  icon: <FaWallet /> },
-  { id: "historial",  label: "Historial de facturación",icon: <FaHistory /> },
-  { id: "membresias", label: "Membresías",             icon: <FaStar /> },
-  { id: "resolucion", label: "Centro de resolución",   icon: <FaLifeRing /> },
-  { id: "peligro",    label: "Zona de peligro",         icon: <FaExclamationTriangle /> },
+  // { id: "saldo",      label: "Saldo",                  icon: <FaWallet /> },
+  // { id: "historial",  label: "Historial de facturación",icon: <FaHistory /> },
+  // { id: "membresias", label: "Membresías",             icon: <FaStar /> },
+  // { id: "resolucion", label: "Centro de resolución",   icon: <FaLifeRing /> },
+  // { id: "peligro",    label: "Zona de peligro",         icon: <FaExclamationTriangle /> },
 ];
 
 const UserConfig: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("general");
+  const { setProfile, profile } = useContext(AuthContext);
   
-  const [form, setform] = useState<FormState>({
-    nombre: "",
-    biografia: "",
-    usuario: "",
-    email: "",
-    telefono: "",
-    showJoined: true,
-    showOwned: true,
-    showLocation: true,
+  const gateway = new AuthGateway();
+  const [activeTab, setActiveTab] = useState<string>("general");
+  const [isModalOpen, setModalOpen] = useState(false)
+
+  const navigate = useNavigate()
+  
+  const [form, setForm] = useState<Partial<Profile>>({
+    profileName: profile.profileName,
+    //biografia: "",
+    profileUsername: profile.profileUsername,
+    email: profile.email,
+    avatarUrl: profile.avatarUrl,
+    phone: profile.phone?? 0,
   });
+
+  const handleLogOut = async () => {
+
+    await gateway.logOut()
+    navigate('/login')
+  }
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setform((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleToggle = (field: keyof FormState) => {
-    setform((prev) => ({ ...prev, [field]: !prev[field] }));
+  // const handleToggle = (field: keyof FormState) => {
+  //   setForm((prev) => ({ ...prev, [field]: !prev[field] }));
+  // };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    await gateway.saveProfileConfig(form)
+    setProfile({
+        ...profile,
+        ...form,
+      });
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-  };
+
+  // useEffect(()=>{
+
+  // },[isModalOpen])
 
   return (
     <div className="flex h-full text-gray-300">
@@ -79,7 +92,7 @@ const UserConfig: React.FC = () => {
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id)}
-            className={`flex items-center w-full p-2 rounded-lg transition \
+            className={`flex items-center w-full p-2 rounded-lg transition cursor-pointer \
               ${
                 activeTab === t.id
                   ? "bg-gray-700 text-white"
@@ -93,8 +106,9 @@ const UserConfig: React.FC = () => {
 
         <button
           type="button"
-          className="flex items-center w-full p-2 mt-4 text-red-500 hover:bg-gray-800 rounded-lg transition"
-        >
+          className="flex items-center w-full p-2 text-red-500 cursor-pointer hover:bg-red-800/30 rounded-lg transition"
+          onClick={handleLogOut}
+          >
           <FaTrashAlt className="mr-3" />
           Cerrar sesión
         </button>
@@ -107,17 +121,56 @@ const UserConfig: React.FC = () => {
               Configuración de la cuenta
             </h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block mb-1">Nombre</label>
-                  <input
-                    name="nombre"
-                    value={form.nombre}
-                    onChange={handleChange}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2"
-                  />
-                </div>
-                <div className="md:col-span-2">
+              <div
+              className="relative inline-block cursor-pointer group"
+              onClick={() => setModalOpen(true)}
+            >
+              <img
+                src={profile.avatarUrl}
+                alt="Avatar"
+                className="
+                  w-20 h-20
+                  rounded-full
+                  object-cover
+                  border-2 border-gray-600
+
+                  transition-all duration-200
+                  group-hover:brightness-75
+                "
+              />
+              <div
+                className="
+                  absolute inset-0
+                  flex items-center justify-center
+                  rounded-full
+                  bg-black/50
+                  opacity-0
+                  transition-opacity duration-200
+                  group-hover:opacity-100
+                "
+              >
+                <span className="text-white text-center text-sm font-medium">
+                  Cambiar avatar
+                </span>
+              </div>
+            </div>
+
+              <AvatarModal
+                isOpen={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                currentUrl={profile.avatarUrl}
+              />
+              <div className="flex flex-col gap-6">
+                  <div className="w-full md:w-1/2">
+                    <label className="block mb-1">Nombre</label>
+                    <input
+                      name="profileName"
+                      value={form.profileName}
+                      onChange={handleChange}
+                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2"
+                    />
+                  </div>
+                {/* <div className="md:col-span-2">
                   <label className="block mb-1">Biografía</label>
                   <textarea
                     name="biografia"
@@ -126,31 +179,32 @@ const UserConfig: React.FC = () => {
                     rows={3}
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2"
                   />
-                </div>
-                <div>
+                </div> */}
+                <div className="w-full md:w-1/2"> 
                   <label className="block mb-1">Nombre de usuario</label>
                   <input
-                    name="usuario"
-                    value={form.usuario}
+                    name="profileUsername"
+                    value={form.profileUsername}
                     onChange={handleChange}
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2"
                   />
                 </div>
-                <div>
+                <div className="w-full md:w-1/2">
                   <label className="block mb-1">Correo electrónico</label>
                   <input
                     name="email"
                     type="email"
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2"
+                    disabled
+                    className="w-full bg-gray-700 border cursor-not-allowed border-gray-600 rounded px-3 py-2"
                   />
                 </div>
-                <div>
+                <div className="w-full md:w-1/2">
                   <label className="block mb-1">Número de teléfono</label>
                   <input
-                    name="telefono"
-                    value={form.telefono}
+                    name="phone"
+                    value={form.phone}
                     onChange={handleChange}
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2"
                   />
@@ -158,7 +212,7 @@ const UserConfig: React.FC = () => {
               </div>
 
               <div className="space-y-4 pt-4 border-t border-gray-700">
-                <Toggle
+                {/* <Toggle
                   label="Whops unidos"
                   checked={form.showJoined}
                   onChange={() => handleToggle("showJoined")}
@@ -172,7 +226,7 @@ const UserConfig: React.FC = () => {
                   label="Ubicación aproximada"
                   checked={form.showLocation}
                   onChange={() => handleToggle("showLocation")}
-                />
+                /> */}
                 <p className="text-sm text-gray-400">
                   Todo lo que ocultes aquí no será visible para otros — y tú tampoco lo verás en los perfiles de otros.
                 </p>

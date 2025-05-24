@@ -1,5 +1,6 @@
 import { AxiosInstance } from 'axios';
 import { buildAxiosInstance } from './axios.builder';
+import { Campaign } from '../models/CampingModel';
 
 export class DashboardGateway {
 
@@ -31,6 +32,15 @@ export class DashboardGateway {
       { withCredentials: true }
     );
     return res.data.participation;
+  }
+
+  async addCampaign(campaign: Partial<Campaign>) {
+    const res = await this.axios.post(
+      '/dashboard/add',
+      { campaign },
+      { withCredentials: true }
+    );
+    return res.data.campaign;
   }
 
 }

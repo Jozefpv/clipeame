@@ -1,9 +1,11 @@
 export interface Profile {
     id: string;
     profileName: string;
+    profileUsername: string;
     email: string
     avatarUrl: string;
     createdAt: Date;
+    phone?: number;
     campaigns: string[];
 }
 
@@ -11,8 +13,9 @@ export interface Profile {
 export const emptyProfile: Profile = {
     id: '',
     profileName: '',
-    email: "",
-    avatarUrl: "",
+    profileUsername: '',
+    email: '',
+    avatarUrl: '',
     createdAt: new Date(),
     campaigns: []
 }

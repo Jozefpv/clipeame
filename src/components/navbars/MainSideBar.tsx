@@ -8,11 +8,14 @@ import { AiOutlineMessage } from "react-icons/ai";
 import { AiOutlineBell } from "react-icons/ai";
 import { AiOutlineLineChart } from "react-icons/ai";
 import { AiOutlineTag } from "react-icons/ai";
+import { Profile } from "../../models/Profile";
 
+interface MainSideBarProps {
+  profile: Profile;
+}
 
-export default function MainSideBar() {
+export default function MainSideBar(props: MainSideBarProps) {
   const navigate = useNavigate()
-
   return (
     <aside
       id="logo-sidebar"
@@ -66,7 +69,7 @@ export default function MainSideBar() {
           </li>
           <li>
             <button className="p-2.5 pr-4 pl-4 rounded-lg text-gray-400 cursor-pointer hover:text-white hover:bg-gray-800 transition" onClick={()=> navigate('/config')}>
-              <img className="w-8 h-8 rounded-full object-cover border-2 border-gray cursor-pointer" src="https://s3.ap-south-1.amazonaws.com/assets.ynos.in/investor-profile-photos/I_7000682.jpg" alt="" />
+              <img className="w-8 h-8 rounded-full object-cover border-2 border-gray cursor-pointer" src={props.profile.avatarUrl} alt="" />
             </button>
           </li> 
         </ul>

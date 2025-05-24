@@ -11,6 +11,9 @@ interface Props {
 export const CampaignCard: React.FC<Props> = ({ campaign }) => {
   const navigate = useNavigate()
   const progress = Math.min(100, (campaign.paid / campaign.budget) * 100);
+  const day   = new Date(campaign.creationDate).getDate().toString().padStart(2, '0');
+  const month = (new Date(campaign.creationDate).getMonth() + 1).toString().padStart(2, '0');
+  const year  = new Date(campaign.creationDate).getFullYear();
 
   return (
     <div className="group bg-zinc-800 rounded-2xl cursor-pointer overflow-hidden shadow-lg flex flex-col hover:bg-zinc-700 transition" 
@@ -26,7 +29,7 @@ export const CampaignCard: React.FC<Props> = ({ campaign }) => {
           className="w-6 h-6 rounded-full object-cover"
         />
         <span className="text-sm text-white/70">
-          Publicado por <strong className="text-white">{campaign.authorName}</strong> · hace 10 horas
+          Publicado por <strong className="text-white">{campaign.authorName}</strong> el {`${day}/${month}/${year}`}
         </span>
       </div>
 

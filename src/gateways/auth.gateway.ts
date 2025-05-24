@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios';
 import { buildAxiosInstance } from './axios.builder';
-import { Profile } from '../models/Profile';
+import { Profile, ProfileConfig } from '../models/Profile';
 
 export class AuthGateway {
 
@@ -12,27 +12,27 @@ export class AuthGateway {
 
     async login(email: string, password: string) {
         const response = await this.axios.post(
-        '/auth/login',
-        { email, password },
-        { withCredentials: true }
+            '/auth/login',
+            { email, password },
+            { withCredentials: true }
         );
         return response.data;
     }
 
-    async register(email: string, password: string){
+    async register(email: string, password: string) {
         const response = await this.axios.post(
-        '/auth/register',
-        { email, password },
-        { withCredentials: true }
+            '/auth/register',
+            { email, password },
+            { withCredentials: true }
         );
         return response;
     }
 
     async verifyOtp(email: string, token: string): Promise<boolean> {
         const response = await this.axios.post(
-        '/auth/verify-otp',
-        { email, token },
-        { withCredentials: true }
+            '/auth/verify-otp',
+            { email, token },
+            { withCredentials: true }
         );
         return response.data.verify
     }
@@ -43,9 +43,39 @@ export class AuthGateway {
 
     async getProfile(profileId: string): Promise<Profile> {
         const res = await this.axios.get(
-        `auth/profile/${profileId}`,
-        { withCredentials: true }
+            `auth/profile/${profileId}`,
+            { withCredentials: true }
       );
-      return res.data;
+      return res.data.profile; 
+    }
+
+    async logOut() {
+        const response = await this.axios.post(
+            '/auth/logout',
+            {},
+            { withCredentials: true }
+        );
+        return response;
+    }
+
+    async uploadAvatar(file: File): Promise<string> {
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        const response = await this.axios.post(
+            '/auth/profile/avatar',
+            formData,
+            { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } }
+        );
+        return response.data.avatarUrl;
+    }
+
+    async saveProfileConfig(form: Partial<Profile>): Promise<boolean> {
+        const response = await this.axios.post(
+            '/auth/profile/config',
+            { form },
+            { withCredentials: true }
+        );
+        return response.data;
     }
 }
