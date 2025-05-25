@@ -1,46 +1,50 @@
 import { AxiosInstance } from 'axios';
 import { buildAxiosInstance } from './axios.builder';
-import { Campaign } from '../models/CampingModel';
 
 export class DashboardGateway {
+  private axios: AxiosInstance;
 
-    private axios: AxiosInstance;
+  constructor() {
+    this.axios = buildAxiosInstance();
+  }
 
-    constructor(){
-        this.axios = buildAxiosInstance();
-    }
+  async getAllCampaigns() {
+    const res = await this.axios.get('/dashboard/campaigns', {
+      withCredentials: true,
+    });
+    return res.data.campaigns;
+  }
 
-    async getAllCampaigns(){
-      const res = await this.axios.get('/dashboard/campaigns', {
-        withCredentials: true
-      });
-      return res.data.campaigns;
-    }
+  async getCampaignById(campaignId: string) {
+    const res = await this.axios.get(`/dashboard/campaigns/${campaignId}`, {
+      withCredentials: true,
+    });
+    return res.data.campaign;
+  }
 
-    async getCampaignById(campaignId: string){
-      const res = await this.axios.get(
-        `/dashboard/campaigns/${campaignId}`,
-        { withCredentials: true }
-      );
-      return res.data.campaign;
+  async getMyCampaignById(prolileId: string) {
+    const res = await this.axios.get(`/dashboard/mycampaigns/${prolileId}`, {
+      withCredentials: true,
+    });
+    return res.data.campaigns;
   }
 
   async participate(campaignId: string, postLink: string) {
     const res = await this.axios.post(
       '/dashboard/participate',
       { campaignId, postLink },
-      { withCredentials: true }
+      { withCredentials: true },
     );
     return res.data.participation;
   }
 
-  async addCampaign(campaign: Partial<Campaign>) {
-    const res = await this.axios.post(
-      '/dashboard/add',
-      { campaign },
-      { withCredentials: true }
-    );
-    return res.data.campaign;
+  async addCampaign(formData: FormData) {
+    const res = await this.axios.post('/dashboard/add', formData, {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return res;
   }
-
 }

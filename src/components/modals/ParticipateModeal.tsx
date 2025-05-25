@@ -110,7 +110,7 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
             Cancelar
           </button>
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full disabled:opacity-50 cursor-pointer"
+            className="bg-blue-600 hover:bg-blue-400 text-white px-5 py-2 rounded-full disabled:opacity-50 cursor-pointer"
             onClick={handleSubmit}
             disabled={loading}
           >

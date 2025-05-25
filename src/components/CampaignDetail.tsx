@@ -3,6 +3,7 @@ import { FaYoutube, FaTwitch } from 'react-icons/fa'
 import { SiTiktok } from 'react-icons/si'
 import { ParticipateModal } from './modals/ParticipateModeal'
 import { CampaignParticipants } from '../models/CampaignParticipants'
+import { mapCampaignCategory, mapCampaignSocialmedia, mapCampaignType } from '../utils/mappers'
 
 export interface FileLink {
   name: string
@@ -14,15 +15,15 @@ export interface CampaignDetailProps {
   authorName: string
   authorAvatar: string
   title: string
-  type: string
+  typeId: number
   imageUrl: string
-  socialMedia: string
+  socialMediaId: number
   status: number,
   paid: number,
   budget: number
   reward: number
   maxPayment: number
-  category: string
+  categoryId: number
   requirements: string[]
   files: unknown[],
   participants: CampaignParticipants[]
@@ -34,15 +35,15 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
   authorName,
   authorAvatar,
   title,
-  type,
+  typeId,
   imageUrl,
   status,
   paid,
   budget,
-  socialMedia,
+  socialMediaId,
   reward,
   maxPayment,
-  category,
+  categoryId,
   requirements,
   files,
   participants
@@ -76,7 +77,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-3 left-4 text-white">
                 <h2 className="text-2xl font-bold">{authorName}</h2>
-                <p className="text-blue-400">{type}</p>
+                <p className="text-blue-400">{mapCampaignType(typeId)}</p>
               </div>
             </div>
           </div>
@@ -132,7 +133,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-4 left-6">
                   <h1 className="text-3xl font-bold text-white">{authorName}</h1>
-                  <p className="text-xl text-blue-400">{type}</p>
+                  <p className="text-xl text-blue-400">{mapCampaignType(typeId)}</p>
                 </div>
               </div>
             </div>
@@ -161,7 +162,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
               </div>
               <div>
                 <p className="font-medium text-white/70">TIPO DE CONTENIDO</p>
-                <p className="font-bold text-white">{type}</p>
+                <p className="font-bold text-white">{mapCampaignType(typeId)}</p>
               </div>
               <div>
                 <p className="font-medium text-white/70">PAGO MÁXIMO</p>
@@ -169,7 +170,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
               </div>
               <div>
                 <p className="font-medium text-white/70">CATEGORÍA</p>
-                <p className="font-bold text-white">{category}</p>
+                <p className="font-bold text-white">{mapCampaignCategory(categoryId)}</p>
               </div>
               <div>
                 <p className="font-medium text-white/70">ESTADO</p>
@@ -182,9 +183,9 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
             <div>
               <p className="font-medium text-white/70 mb-2">PLATAFORMAS</p>
               <div className="flex items-center gap-3 text-lg">
-                {socialMedia.toLowerCase().includes('youtube') && <FaYoutube className="text-white"/>}
-                {socialMedia.toLowerCase().includes('tiktok')  && <SiTiktok className="text-white"/>}
-                {socialMedia.toLowerCase().includes('twitch')  && <FaTwitch className="text-white"/>}
+                {mapCampaignSocialmedia(socialMediaId).includes('YOUTUBE') && <FaYoutube className="w-5 h-5" />}
+                {mapCampaignSocialmedia(socialMediaId).includes('TIKTOK') && <SiTiktok className="w-5 h-5" />}
+                {mapCampaignSocialmedia(socialMediaId).includes('INSTAGRAM') && <FaTwitch className="w-5 h-5" />}
               </div>
             </div>
             
@@ -198,7 +199,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
             <div>
               <p className="font-medium text-white/70 mb-2">ARCHIVOS</p>
               <ul className="space-y-2">
-                {files.map(f => (
+                {files && files.map(f => (
                   <li>
                     <a
                       href={f}
@@ -225,7 +226,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
           <div className="px-6 py-4 border-t border-gray-700 flex justify-end">
             <button
               onClick={() => setModalOpen(true)}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-full transition cursor-pointer"
+              className="bg-blue-600 hover:bg-blue-400 text-white font-semibold px-6 py-2 rounded-full transition cursor-pointer"
             >
               PARTICIPAR
             </button>

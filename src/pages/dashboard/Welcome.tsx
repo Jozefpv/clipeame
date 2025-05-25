@@ -5,7 +5,7 @@ export default function Welcome() {
       <p className="text-lg text-white/70 mb-8">¿Cómo funciona?</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full">
-        <div className="bg-sky-100 rounded-2xl p-8 flex flex-col h-64">
+        <div className="bg-sky-100 rounded-2xl p-8 flex flex-col h-64 transform transition-transform duration-400 ease-out hover:scale-105">
         <div className="flex-1 flex items-center justify-center">
           <h2 className="text-4xl font-semibold text-black text-center">
             Soy Creader de Contenido
@@ -22,7 +22,7 @@ export default function Welcome() {
         </div>
       </div>
 
-        <div className="bg-sky-100 rounded-2xl p-8 flex flex-col h-64">
+      <div className="bg-sky-100 rounded-2xl p-8 flex flex-col h-64 transform transition-transform duration-400 ease-out hover:scale-105">
         <div className="flex-1 flex items-center justify-center">
           <h2 className="text-4xl font-semibold text-black text-center">
             Soy Clipper
@@ -37,7 +37,7 @@ export default function Welcome() {
             Ver cómo funciona
           </button>
         </div>
-      </div>
+        </div>
       </div>
     </div>
   )

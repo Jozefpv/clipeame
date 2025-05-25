@@ -8,10 +8,11 @@ export interface Campaign {
   budget: number
   paid: number
   reward: number
-  type: string
-  socialMedia: string
+  typeId: number
+  socialMediaId: number
   requirements: string[]
-  category: string
+  categoryId: number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   files: any[]
   status: number
   creationDate: Date

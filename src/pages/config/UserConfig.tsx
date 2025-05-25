@@ -235,7 +235,7 @@ const UserConfig: React.FC = () => {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white transition"
+                  className="bg-blue-600 hover:bg-blue-400 px-6 py-2 rounded text-white transition"
                 >
                   Guardar
                 </button>

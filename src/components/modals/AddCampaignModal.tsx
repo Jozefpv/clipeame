@@ -1,7 +1,8 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, ChangeEvent } from 'react'
 import { DashboardGateway } from '../../gateways/dashboard.gateway'
-import { AuthContext } from '../../context/AuthContext'
+
 import { Campaign } from '../../models/CampingModel'
+import { Spinner } from '../Spinner'
 
 interface CreateCampaignModalProps {
   isOpen: boolean
@@ -9,57 +10,116 @@ interface CreateCampaignModalProps {
   onCreated: (newCampaign: Campaign) => void
 }
 
+interface CampaignForm {
+  title: string
+  description: string
+  budget: number | ''
+  reward: number | ''
+  typeId: number | ''
+  socialMediaId: number | ''
+  categoryId: number | ''
+  startDate: string
+  endDate: string
+  imageFile: File | null
+}
+
 export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
   isOpen,
-  onClose,
-  onCreated,
+  onClose
 }) => {
-  const { profile } = useContext(AuthContext)
   const gateway = new DashboardGateway()
 
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [imageUrl, setImageUrl] = useState('')
-  const [budget, setBudget] = useState<number | ''>('')
-  const [reward, setReward] = useState<number | ''>('')
-  const [type, setType] = useState('Clip')
-  const [socialMedia, setSocialMedia] = useState('YouTube')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const [form, setForm] = useState<CampaignForm>({
+    title: '',
+    description: '',
+    budget: '',
+    reward: '',
+    typeId: '',
+    socialMediaId: '',
+    categoryId: '',
+    startDate: '',
+    endDate: '',
+    imageFile: null,
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const handleChange = (
+    e: ChangeEvent<
+      HTMLInputElement |
+      HTMLTextAreaElement |
+      HTMLSelectElement
+    >
+  ) => {
+    const { name, value, type } = e.target
+    if (type === 'file') {
+      const file = (e.target as HTMLInputElement).files?.[0] ?? null
+      setForm(prev => ({ ...prev, imageFile: file }))
+    } else if (type === 'number') {
+      setForm(prev => ({
+        ...prev,
+        [name]: value === '' ? '' : Number(value),
+      }))
+    } else {
+      setForm(prev => ({
+        ...prev,
+        [name]: name.endsWith('Id') ? Number(value) : value,
+      }))
+    }
+  }
+
   const handleSubmit = async () => {
     setError(null)
-    if (!title.trim() || !description.trim() || !imageUrl.trim() 
-      || !budget || !reward || !startDate || !endDate) {
-      setError('Por favor rellena todos los campos obligatorios.')
+    const {
+      title,
+      description,
+      budget,
+      reward,
+      typeId,
+      socialMediaId,
+      categoryId,
+      startDate,
+      endDate,
+      imageFile,
+    } = form
+
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      !budget ||
+      !reward ||
+      !typeId ||
+      !socialMediaId ||
+      !categoryId ||
+      !startDate ||
+      !endDate ||
+      !imageFile
+    ) {
+      setError('Rellena todos los campos obligatorios, incluyendo imagen y selectores.')
       return
     }
 
     setLoading(true)
     try {
-      const newCampaign = await gateway.addCampaign({
-        title,
-        description,
-        imageUrl,
-        budget: Number(budget),
-        paid: 0,
-        reward: Number(reward),
-        type,
-        socialMedia,
-        requirements: [],
-        category: '',
-        files: [],
-        status: 0,
-        creationDate: new Date(),         
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
-        authorId: profile.id,
-        authorName: profile.profileName,
-        authorAvatar: profile.avatarUrl,
-      })
-      onCreated(newCampaign)
+      const body = new FormData()
+      body.append('title', title)
+      body.append('description', description)
+      body.append('budget', budget.toString())
+      body.append('reward', reward.toString())
+      body.append('typeId', typeId.toString())
+      body.append('socialMediaId', socialMediaId.toString())
+      body.append('categoryId', categoryId.toString())
+      body.append('startDate', startDate)
+      body.append('endDate', endDate)
+      body.append('image', imageFile)
+      body.append('paid', '0')
+      body.append('requirements', '[]')
+      body.append('files', '[]')
+      body.append('status', '0')
+      body.append('creationDate', new Date().toISOString())
+
+      await gateway.addCampaign(body)
+
       onClose()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -84,7 +144,7 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
         <header className="px-6 py-4 border-b border-gray-700 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-white">Crear campaña</h2>
           <button
-            className="text-gray-400 hover:text-white cursor-pointer"
+            className="text-gray-400 hover:text-white"
             onClick={onClose}
             disabled={loading}
           >
@@ -95,49 +155,84 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
         <div className="px-6 py-4 space-y-4 text-white text-sm">
           {error && <p className="text-red-400">{error}</p>}
 
+          {/* Inputs de texto */}
           <div className="space-y-1">
             <label className="block text-white/80">Título*</label>
             <input
               type="text"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              placeholder="Nombre de la campaña"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
               className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
               disabled={loading}
             />
           </div>
-
           <div className="space-y-1">
             <label className="block text-white/80">Descripción*</label>
             <textarea
-              value={description}
-              onChange={e => setDescription(e.target.value)}
+              name="description"
+              value={form.description}
+              onChange={handleChange}
               rows={3}
-              placeholder="Explica brevemente la campaña"
               className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
               disabled={loading}
             />
           </div>
 
-          <div className="space-y-1">
-            <label className="block text-white/80">URL de imagen*</label>
-            <input
-              type="text"
-              value={imageUrl}
-              onChange={e => setImageUrl(e.target.value)}
-              placeholder="https://…"
-              className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
-              disabled={loading}
-            />
+          {/* Selectores */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="block text-white/80">Tipo*</label>
+              <select
+                name="typeId"
+                value={form.typeId}
+                onChange={handleChange}
+                className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
+                disabled={loading}
+              >
+                <option value="">Selecciona...</option>
+                <option value="1">Clip</option>
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="block text-white/80">Red social*</label>
+              <select
+                name="socialMediaId"
+                value={form.socialMediaId}
+                onChange={handleChange}
+                className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
+                disabled={loading}
+              >
+                <option value="">Selecciona...</option>
+                <option value="1">TikTok</option>
+                <option value="2">Instagram</option>
+                <option value="3">YouTube</option>
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="block text-white/80">Categoría*</label>
+              <select
+                name="categoryId"
+                value={form.categoryId}
+                onChange={handleChange}
+                className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
+                disabled={loading}
+              >
+                <option value="">Selecciona...</option>
+                <option value="1">Creador</option>
+              </select>
+            </div>
           </div>
 
+          {/* Fecha y presupuesto */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="block text-white/80">Presupuesto (€)*</label>
               <input
                 type="number"
-                value={budget}
-                onChange={e => setBudget(e.target.value === '' ? '' : Number(e.target.value))}
+                name="budget"
+                value={form.budget}
+                onChange={handleChange}
                 className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
                 disabled={loading}
               />
@@ -146,40 +241,12 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
               <label className="block text-white/80">Recompensa (€ por 1K visitas)*</label>
               <input
                 type="number"
-                value={reward}
-                onChange={e => setReward(e.target.value === '' ? '' : Number(e.target.value))}
+                name="reward"
+                value={form.reward}
+                onChange={handleChange}
                 className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
                 disabled={loading}
               />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="block text-white/80">Tipo*</label>
-              <select
-                value={type}
-                onChange={e => setType(e.target.value)}
-                className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
-                disabled={loading}
-              >
-                <option>Clip</option>
-                <option>Short</option>
-                <option>Reel</option>
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label className="block text-white/80">Red social*</label>
-              <select
-                value={socialMedia}
-                onChange={e => setSocialMedia(e.target.value)}
-                className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
-                disabled={loading}
-              >
-                <option>YouTube</option>
-                <option>TikTok</option>
-                <option>Instagram</option>
-              </select>
             </div>
           </div>
 
@@ -188,8 +255,9 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
               <label className="block text-white/80">Inicio*</label>
               <input
                 type="date"
-                value={startDate}
-                onChange={e => setStartDate(e.target.value)}
+                name="startDate"
+                value={form.startDate}
+                onChange={handleChange}
                 className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
                 disabled={loading}
               />
@@ -198,12 +266,26 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
               <label className="block text-white/80">Fin*</label>
               <input
                 type="date"
-                value={endDate}
-                onChange={e => setEndDate(e.target.value)}
+                name="endDate"
+                value={form.endDate}
+                onChange={handleChange}
                 className="w-full bg-zinc-800 border border-gray-600 px-3 py-2 rounded focus:outline-none focus:border-blue-500"
                 disabled={loading}
               />
             </div>
+          </div>
+
+          {/* Portada */}
+          <div className="space-y-1">
+            <label className="block text-white/80">Portada (imagen)*</label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+              disabled={loading}
+              className="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+            />
           </div>
         </div>
 
@@ -216,11 +298,18 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
             Cancelar
           </button>
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full disabled:opacity-50"
+            className="bg-blue-600 hover:bg-blue-400 text-white font-semibold px-6 py-2 rounded-full transition cursor-pointer"
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? 'Creando…' : 'Crear campaña'}
+            {loading ? (
+              <>
+                <div className='flex'>{'Creando…'}
+                <Spinner className="ml-2" /></div>
+              </>
+            ) : (
+              'Crear campaña'
+            )}
           </button>
         </footer>
       </div>

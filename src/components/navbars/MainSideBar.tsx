@@ -58,7 +58,7 @@ export default function MainSideBar(props: MainSideBarProps) {
             </button>
           </li>
           <li>
-            <button className="p-3 pr-5 pl-5 rounded-lg text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 transition">
+            <button className="p-3 pr-5 pl-5 rounded-lg text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 transition" onClick={() => navigate('/statistics')}>
               <AiOutlineLineChart size={25} />
             </button>
           </li>

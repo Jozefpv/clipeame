@@ -111,7 +111,7 @@ export default function VerifyEmail() {
         <button
           disabled={!isCodeComplete}
           onClick={() => submitCode(code.join(''))}
-          className={`mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-full transition ${
+          className={`mt-4 w-full bg-blue-600 hover:bg-blue-400 text-white font-medium py-2 rounded-full transition ${
             !isCodeComplete ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
           }`}
         >

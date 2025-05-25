@@ -12,10 +12,10 @@ export const emptyCampaign: Campaign = {
   budget: 0,
   paid: 0,
   reward: 0,
-  type: '',
-  socialMedia: '',
+  typeId: 0,
+  socialMediaId: 0,
   requirements: [],
-  category: '',
+  categoryId: 0,
   files: [],
   status: 0,
   creationDate: new Date(),
@@ -43,9 +43,6 @@ export default function CampaignPage() {
     if (!stateCampaign && campaignId) {
       (async () => {
         const fetched = await gateway.getCampaignById(campaignId)
-        fetched.onParticipate = () => {
-          console.log('¡Me apunto a la campaña!', campaignId)
-        }
         setCampaign(fetched)
       })()
     }

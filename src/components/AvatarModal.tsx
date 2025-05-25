@@ -118,7 +118,7 @@ export const AvatarModal: React.FC<AvatarModalProps> = ({
           <button
             onClick={handleUpload}
             disabled={!file || loading}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full disabled:opacity-50"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-400 text-white rounded-full disabled:opacity-50"
           >
             {loading ? 'Subiendo...' : 'Guardar'}
           </button>

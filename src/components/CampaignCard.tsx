@@ -3,6 +3,7 @@ import { Campaign } from '../models/CampingModel';
 import { FaYoutube, FaTwitch } from 'react-icons/fa';
 import { SiTiktok } from 'react-icons/si';
 import { useNavigate } from 'react-router-dom';
+import { mapCampaignSocialmedia, mapCampaignType } from '../utils/mappers';
 
 interface Props {
   campaign: Campaign;
@@ -67,15 +68,15 @@ export const CampaignCard: React.FC<Props> = ({ campaign }) => {
          <div className="mt-4 grid grid-cols-3 gap-4 text-xs text-white/70">
             <div className="flex flex-col items-start">
               <span className="font-medium text-white">Tipo</span>
-              <span className="mt-1">{campaign.type}</span>
+              <span className="mt-1">{mapCampaignType(campaign.typeId)}</span>
             </div>
 
             <div className="flex flex-col items-center">
               <span className="font-medium text-white">Plataformas</span>
               <div className="mt-1 flex items-center gap-2">
-                {campaign.socialMedia.includes('youtube') && <FaYoutube className="w-5 h-5" />}
-                {campaign.socialMedia.includes('tiktok') && <SiTiktok className="w-5 h-5" />}
-                {campaign.socialMedia.includes('twitch') && <FaTwitch className="w-5 h-5" />}
+                {mapCampaignSocialmedia(campaign.socialMediaId).includes('YOUTUBE') && <FaYoutube className="w-5 h-5" />}
+                 {mapCampaignSocialmedia(campaign.socialMediaId).includes('TIKTOK') && <SiTiktok className="w-5 h-5" />}
+                 {mapCampaignSocialmedia(campaign.socialMediaId).includes('INSTAGRAM') && <FaTwitch className="w-5 h-5" />}
               </div>
             </div>
 
