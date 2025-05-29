@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CampaignCard } from '../../components/CampaignCard';
 import { FiDollarSign } from 'react-icons/fi';
 import { DashboardGateway } from '../../gateways/dashboard.gateway';

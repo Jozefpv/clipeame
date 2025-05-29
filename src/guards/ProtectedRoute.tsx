@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 import { ApiGateway } from '../gateways/api.gateway'
 import { AuthGateway } from '../gateways/auth.gateway'

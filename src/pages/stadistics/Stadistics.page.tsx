@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Campaign } from '../../models/CampingModel';
 import { CampaignStadisticsItem } from '../../components/CampaignStadisticsItem';
 import { DashboardGateway } from '../../gateways/dashboard.gateway';

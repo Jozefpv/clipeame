@@ -50,7 +50,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
 }) => {
   const overallProgress = Math.min(100, (paid / budget) * 100)
   const [isModalOpen, setModalOpen] = useState(false)
-
+  console.log(files)
   return (
     <>
     <div className="min-h-screen bg-zinc-900 p-8">
@@ -199,7 +199,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
             <div>
               <p className="font-medium text-white/70 mb-2">ARCHIVOS</p>
               <ul className="space-y-2">
-                {files && files.map(f => (
+                {/* {files && files.map(f => (
                   <li>
                     <a
                       href={f}
@@ -211,7 +211,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                       test
                     </a>
                   </li>
-                ))}
+                ))} */}
               </ul>
             </div>
             
