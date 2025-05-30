@@ -2,10 +2,10 @@ import playIcon from "../../assets/images/playIcon.png"
 
 import { AiOutlineHome } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import { AiOutlineSearch } from "react-icons/ai";
+//import { AiOutlineSearch } from "react-icons/ai";
 import { AiOutlineCompass } from "react-icons/ai";
-import { AiOutlineMessage } from "react-icons/ai";
-import { AiOutlineBell } from "react-icons/ai";
+//import { AiOutlineMessage } from "react-icons/ai";
+//import { AiOutlineBell } from "react-icons/ai";
 import { AiOutlineLineChart } from "react-icons/ai";
 import { AiOutlineTag } from "react-icons/ai";
 import { Profile } from "../../models/Profile";
@@ -37,36 +37,37 @@ export default function MainSideBar(props: MainSideBarProps) {
               <AiOutlineHome size={25} />
             </button>
           </li>
-          <li>
+          {/* <li>
             <button className="p-3 pr-5 pl-5 rounded-lg text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 transition" onClick={()=> navigate('/config')}>
               <AiOutlineSearch size={25} />
             </button>
-          </li>
+          </li> */}
           <li>
             <button className="p-3 pr-5 pl-5 rounded-lg text-gray-400 cursor-pointer hover:text-white hover:bg-gray-800 transition" onClick={()=> navigate('/dashboard')}>
               <AiOutlineCompass size={25} />
             </button>
           </li>
-          <li>
+          {/* <li>
             <button className="p-3 pr-5 pl-5 rounded-lg text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 transition" onClick={()=> navigate('/')}>
               <AiOutlineMessage size={25} />
             </button>
-          </li>
-          <li>
+          </li> */}
+          {/* <li>
             <button className="p-3 pr-5 pl-5 rounded-lg text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 transition">
               <AiOutlineBell size={25} />
             </button>
-          </li>
+          </li> */}
           <li>
             <button className="p-3 pr-5 pl-5 rounded-lg text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 transition" onClick={() => navigate('/statistics')}>
               <AiOutlineLineChart size={25} />
             </button>
           </li>
-          <li>
-            <button className="p-3 pr-5 pl-5 rounded-lg text-gray-400 cursor-pointer hover:text-white hover:bg-gray-800 transition">
+          {props.profile.rol === 1 && <li>
+            <button className="p-3 pr-5 pl-5 rounded-lg text-gray-400 cursor-pointer hover:text-white hover:bg-gray-800 transition" onClick={() => navigate('/scrap')}>
               <AiOutlineTag size={25} />
             </button>
-          </li>
+          </li>}
+          
           <li>
             <button className="p-2.5 pr-4 pl-4 rounded-lg text-gray-400 cursor-pointer hover:text-white hover:bg-gray-800 transition" onClick={()=> navigate('/config')}>
               <img className="w-8 h-8 rounded-full object-cover border-2 border-gray cursor-pointer" src={props.profile.avatarUrl} alt="" />

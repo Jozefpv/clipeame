@@ -12,6 +12,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Welcome from "./pages/dashboard/Welcome";
 import Campaign from "./pages/dashboard/Campaign-page.tsx";
 import { StadisticsPage } from "./pages/stadistics/Stadistics.page.tsx";
+import ScrapPage from "./pages/scrap/Scrap-page.tsx";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
               <Route path="/welcome" element={<Welcome />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/statistics" element={<StadisticsPage />} />
+              <Route path="/scrap" element={<ScrapPage />} />
               <Route path="/config" element={<UserConfig />} />
               <Route path="/campaign/:campaignId" element={<Campaign />} />
             </Route>
