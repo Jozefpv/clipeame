@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
-import { CampaignDetail } from '../../components/CampaignDetail'
-import { DashboardGateway } from '../../gateways/dashboard.gateway'
-import { Campaign } from '../../models/CampingModel'
+import { useEffect, useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
+import { CampaignDetail } from '../../components/CampaignDetail';
+import { DashboardGateway } from '../../gateways/dashboard.gateway';
+import { Campaign } from '../../models/CampingModel';
 
 export const emptyCampaign: Campaign = {
   id: '',
@@ -10,6 +10,7 @@ export const emptyCampaign: Campaign = {
   description: '',
   imageUrl: '',
   budget: 0,
+  budgetRemaining: 0,
   paid: 0,
   reward: 0,
   typeId: 0,
@@ -26,25 +27,25 @@ export const emptyCampaign: Campaign = {
   authorAvatar: '',
   maxPayment: 0,
   participants: [],
-  onParticipate: () => {}
-}
+  onParticipate: () => {},
+};
 
 export default function CampaignPage() {
-  const { campaignId } = useParams<{ campaignId: string }>()
-  const location = useLocation()
-  const stateCampaign = (location.state as { campaign?: Campaign })?.campaign
+  const { campaignId } = useParams<{ campaignId: string }>();
+  const location = useLocation();
+  const stateCampaign = (location.state as { campaign?: Campaign })?.campaign;
 
   const [campaign, setCampaign] = useState<Campaign>(
-    stateCampaign ?? emptyCampaign
-  )
-  const gateway = new DashboardGateway()
+    stateCampaign ?? emptyCampaign,
+  );
+  const gateway = new DashboardGateway();
 
   useEffect(() => {
     if (!stateCampaign && campaignId) {
       (async () => {
-        const fetched = await gateway.getCampaignById(campaignId)
-        setCampaign(fetched)
-      })()
+        const fetched = await gateway.getCampaignById(campaignId);
+        setCampaign(fetched);
+      })();
     }
     setCampaign(prev => ({
       ...prev,
@@ -55,16 +56,19 @@ export default function CampaignPage() {
         'El vídeo debe tener al menos 30 segundos de duración.',
       ],
       files: [
-        { name: 'Instrucciones.pdf', url: 'https://example.com/instrucciones.pdf' },
-        { name: 'Assets.zip',        url: 'https://example.com/assets.zip' },
+        {
+          name: 'Instrucciones.pdf',
+          url: 'https://example.com/instrucciones.pdf',
+        },
+        { name: 'Assets.zip', url: 'https://example.com/assets.zip' },
       ],
     }));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
       <CampaignDetail {...campaign} />
     </>
-  )
+  );
 }

@@ -45,6 +45,6 @@ export class DashboardGateway {
         'Content-Type': 'multipart/form-data',
       },
     });
-    return res;
+    return res.data.checkoutUrl;
   }
 }

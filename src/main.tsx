@@ -6,7 +6,7 @@ import { AuthProvider } from './context/AuthContext.tsx';
 import { CampaignProvider } from './context/CampaignContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
-  <BrowserRouter basename="/clipeame">
+  <BrowserRouter>
     <AuthProvider>
       <CampaignProvider>
         <App />

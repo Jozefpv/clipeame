@@ -1,33 +1,33 @@
-import React, { useState, ChangeEvent } from 'react'
-import { DashboardGateway } from '../../gateways/dashboard.gateway'
+import React, { useState, ChangeEvent } from 'react';
+import { DashboardGateway } from '../../gateways/dashboard.gateway';
 
-import { Campaign } from '../../models/CampingModel'
-import { Spinner } from '../Spinner'
+import { Campaign } from '../../models/CampingModel';
+import { Spinner } from '../Spinner';
 
 interface CreateCampaignModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onCreated: (newCampaign: Campaign) => void
+  isOpen: boolean;
+  onClose: () => void;
+  onCreated: (newCampaign: Campaign) => void;
 }
 
 interface CampaignForm {
-  title: string
-  description: string
-  budget: number | ''
-  reward: number | ''
-  typeId: number | ''
-  socialMediaId: number | ''
-  categoryId: number | ''
-  startDate: string
-  endDate: string
-  imageFile: File | null
+  title: string;
+  description: string;
+  budget: number | '';
+  reward: number | '';
+  typeId: number | '';
+  socialMediaId: number | '';
+  categoryId: number | '';
+  startDate: string;
+  endDate: string;
+  imageFile: File | null;
 }
 
 export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
   isOpen,
-  onClose
+  onClose,
 }) => {
-  const gateway = new DashboardGateway()
+  const gateway = new DashboardGateway();
 
   const [form, setForm] = useState<CampaignForm>({
     title: '',
@@ -40,36 +40,32 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
     startDate: '',
     endDate: '',
     imageFile: null,
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
-    e: ChangeEvent<
-      HTMLInputElement |
-      HTMLTextAreaElement |
-      HTMLSelectElement
-    >
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
-    const { name, value, type } = e.target
+    const { name, value, type } = e.target;
     if (type === 'file') {
-      const file = (e.target as HTMLInputElement).files?.[0] ?? null
-      setForm(prev => ({ ...prev, imageFile: file }))
+      const file = (e.target as HTMLInputElement).files?.[0] ?? null;
+      setForm(prev => ({ ...prev, imageFile: file }));
     } else if (type === 'number') {
       setForm(prev => ({
         ...prev,
         [name]: value === '' ? '' : Number(value),
-      }))
+      }));
     } else {
       setForm(prev => ({
         ...prev,
         [name]: name.endsWith('Id') ? Number(value) : value,
-      }))
+      }));
     }
-  }
+  };
 
   const handleSubmit = async () => {
-    setError(null)
+    setError(null);
     const {
       title,
       description,
@@ -81,7 +77,7 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
       startDate,
       endDate,
       imageFile,
-    } = form
+    } = form;
 
     if (
       !title.trim() ||
@@ -95,42 +91,45 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
       !endDate ||
       !imageFile
     ) {
-      setError('Rellena todos los campos obligatorios, incluyendo imagen y selectores.')
-      return
+      setError(
+        'Rellena todos los campos obligatorios, incluyendo imagen y selectores.',
+      );
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const body = new FormData()
-      body.append('title', title)
-      body.append('description', description)
-      body.append('budget', budget.toString())
-      body.append('reward', reward.toString())
-      body.append('typeId', typeId.toString())
-      body.append('socialMediaId', socialMediaId.toString())
-      body.append('categoryId', categoryId.toString())
-      body.append('startDate', startDate)
-      body.append('endDate', endDate)
-      body.append('image', imageFile)
-      body.append('paid', '0')
-      body.append('requirements', '[]')
-      body.append('files', '[]')
-      body.append('status', '0')
-      body.append('creationDate', new Date().toISOString())
+      const body = new FormData();
+      body.append('title', title);
+      body.append('description', description);
+      body.append('budget', budget.toString());
+      body.append('reward', reward.toString());
+      body.append('typeId', typeId.toString());
+      body.append('socialMediaId', socialMediaId.toString());
+      body.append('categoryId', categoryId.toString());
+      body.append('startDate', startDate);
+      body.append('endDate', endDate);
+      body.append('image', imageFile);
+      body.append('paid', '0');
+      body.append('requirements', '[]');
+      body.append('files', '[]');
+      body.append('status', '0');
+      body.append('creationDate', new Date().toISOString());
 
-      await gateway.addCampaign(body)
+      const checkoutUrl = await gateway.addCampaign(body);
+      window.location.href = checkoutUrl;
 
-      onClose()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onClose();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      console.error(err)
-      setError(err.message || 'Error creando campaña')
+      console.error(err);
+      setError(err.message || 'Error creando campaña');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div
@@ -238,7 +237,9 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
               />
             </div>
             <div className="space-y-1">
-              <label className="block text-white/80">Recompensa (€ por 1K visitas)*</label>
+              <label className="block text-white/80">
+                Recompensa (€ por 1K visitas)*
+              </label>
               <input
                 type="number"
                 name="reward"
@@ -304,8 +305,10 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
           >
             {loading ? (
               <>
-                <div className='flex'>{'Creando…'}
-                <Spinner className="ml-2" /></div>
+                <div className="flex">
+                  {'Creando…'}
+                  <Spinner className="ml-2" />
+                </div>
               </>
             ) : (
               'Crear campaña'
@@ -314,5 +317,5 @@ export const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({
         </footer>
       </div>
     </div>
-  )
-}
+  );
+};
